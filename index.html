@@ -1,135 +1,77 @@
 <html>
 <head>
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-<script>
-  (function ($) {
+  <style>
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
 
-  $.fn.rating = function () {
+fieldset, label { margin: 0; padding: 0; }
+body{ margin: 20px; }
+h1 { font-size: 1.5em; margin: 10px; }
 
-    var element;
+/****** Style Star Rating Widget *****/
 
-    // A private function to highlight a star corresponding to a given value
-    function _paintValue(ratingInput, value) {
-      var selectedStar = $(ratingInput).find('[data-value=' + value + ']');
-      selectedStar.removeClass('glyphicon-star-empty').addClass('glyphicon-star');
-      selectedStar.prevAll('[data-value]').removeClass('glyphicon-star-empty').addClass('glyphicon-star');
-      selectedStar.nextAll('[data-value]').removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-    }
+.rating { 
+  border: none;
+  float: left;
+}
 
-    // A private function to remove the selected rating
-    function _clearValue(ratingInput) {
-      var self = $(ratingInput);
-      self.find('[data-value]').removeClass('glyphicon-star').addClass('glyphicon-star-empty');
-      self.find('.rating-clear').hide();
-      self.find('input').val('').trigger('change');
-    }
+.rating > input { display: none; } 
+.rating > label:before { 
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
+}
 
-    // Iterate and transform all selected inputs
-    for (element = this.length - 1; element >= 0; element--) {
+.rating > .half:before { 
+  content: "\f089";
+  position: absolute;
+}
 
-      var el, i, ratingInputs,
-        originalInput = $(this[element]),
-        max = originalInput.data('max') || 5,
-        min = originalInput.data('min') || 0,
-        clearable = originalInput.data('clearable') || null,
-        stars = '';
+.rating > label { 
+  color: #ddd; 
+ float: right; 
+}
 
-      // HTML element construction
-      for (i = min; i <= max; i++) {
-        // Create <max> empty stars
-        stars += ['<span class="glyphicon glyphicon-star-empty" data-value="', i, '"></span>'].join('');
-      }
-      // Add a clear link if clearable option is set
-      if (clearable) {
-        stars += [
-          ' <a class="rating-clear" style="display:none;" href="javascript:void">',
-          '<span class="glyphicon glyphicon-remove"></span> ',
-          clearable,
-          '</a>'].join('');
-      }
+/***** CSS Magic to Highlight Stars on Hover *****/
 
-      el = [
-        // Rating widget is wrapped inside a div
-        '<div class="rating-input">',
-        stars,
-        // Value will be hold in a hidden input with same name and id than original input so the form will still work
-        '<input type="hidden" name="',
-        originalInput.attr('name'),
-        '" value="',
-        originalInput.val(),
-        '" id="',
-        originalInput.attr('id'),
-        '" />',
-        '</div>'].join('');
+.rating > input:checked ~ label, /* show gold star when clicked */
+.rating:not(:checked) > label:hover, /* hover current star */
+.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
 
-      // Replace original inputs HTML with the new one
-      originalInput.replaceWith(el);
+.rating > input:checked + label:hover, /* hover current star when changing rating */
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+.rating > input:checked ~ label:hover ~ label { color: #FFED85;  } </style>
 
-    }
-
-    // Give live to the newly generated widgets
-    $('.rating-input')
-      // Highlight stars on hovering
-      .on('mouseenter', '[data-value]', function () {
-        var self = $(this);
-        _paintValue(self.closest('.rating-input'), self.data('value'));
-      })
-      // View current value while mouse is out
-      .on('mouseleave', '[data-value]', function () {
-        var self = $(this);
-        var val = self.siblings('input').val();
-        if (val) {
-          _paintValue(self.closest('.rating-input'), val);
-        } else {
-          _clearValue(self.closest('.rating-input'));
-        }
-      })
-      // Set the selected value to the hidden field
-      .on('click', '[data-value]', function (e) {
-        var self = $(this);
-        var val = self.data('value');
-        self.siblings('input').val(val).trigger('change');
-        self.siblings('.rating-clear').show();
-        e.preventDefault();
-        false
-      })
-      // Remove value on clear
-      .on('click', '.rating-clear', function (e) {
-        _clearValue($(this).closest('.rating-input'));
-        e.preventDefault();
-        false
-      })
-      // Initialize view with default value
-      .each(function () {
-        var val = $(this).find('input').val();
-        if (val) {
-          _paintValue(this, val);
-          $(this).find('.rating-clear').show();
-        }
-      });
-
-  };
-
-  // Auto apply conversion of number fields with class 'rating' into rating-fields
-  $(function () {
-    if ($('input.rating[type=number]').length > 0) {
-      $('input.rating[type=number]').rating();
-    }
-  });
-
-}(jQuery));
-</script>
 </head>
 <body>
 <form>
-<input type="number" class="rating" id="test" name="test" data-min="1" data-max="5" value="0">
+<fieldset class="rating">
+    <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+    <input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+    <input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+    <input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+    <input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+    <input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+</fieldset><br>
+<p></p>
   First name:<br>
+
   <input type="text" name="firstname" placeholder="FirstName"required><br>
+  <p></p>
   Last name:<br>
   <input type="text" name="lastname" placeholder="lastname" required><br>
+  <p></p>
   Email Address:<br>
   <input type="email" name="email" placeholder="YourEmail@something.com" required><br>
-  <input type="textarea" name="comments" Placeholder="Give us some feedback on how to improve our site!" required<br>
+  <p></p>
+  <input type="textarea" name="comments" Placeholder="Give us some feedback on how to improve our site!" rows="30" required<br>
+ <p></p>
   <input type="submit" value="submit" >
   </form>
   </body>
